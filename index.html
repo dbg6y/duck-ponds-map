@@ -17,13 +17,12 @@
     
     <style>
         :root {
-            --color-forest: #2d4a3e;
-            --color-forest-dark: #1a2e26;
-            --color-forest-light: #3d6652;
-            --color-sand: #f4f1eb;
-            --color-river: #4a7c94;
-            --color-accent: #c4a962;
-            --color-text: #333333;
+            --color-primary: #193a80;
+            --color-primary-dark: #003364;
+            --color-primary-light: #2a4a90;
+            --color-sand: #e3ddcd;
+            --color-accent: #e02828;
+            --color-text: #444141;
             --color-text-light: #666666;
             --font-heading: 'Libre Baskerville', Georgia, serif;
             --font-body: 'Source Sans 3', -apple-system, sans-serif;
@@ -39,7 +38,7 @@
             height: 100%;
             font-family: var(--font-body);
             color: var(--color-text);
-            background: var(--color-forest-dark);
+            background: var(--color-primary-dark);
         }
         
         #map {
@@ -67,7 +66,7 @@
         }
         
         .panel-header {
-            background: var(--color-forest);
+            background: var(--color-primary);
             color: white;
             padding: 24px;
             position: relative;
@@ -114,14 +113,14 @@
             background: white;
             border-radius: 6px;
             padding: 16px;
-            border-left: 3px solid var(--color-forest);
+            border-left: 3px solid var(--color-primary);
         }
         
         .stat-box .value {
             font-family: var(--font-heading);
             font-size: 1.4rem;
             font-weight: 700;
-            color: var(--color-forest);
+            color: var(--color-primary);
             line-height: 1.2;
         }
         
@@ -141,7 +140,7 @@
             font-family: var(--font-heading);
             font-size: 1rem;
             font-weight: 700;
-            color: var(--color-forest);
+            color: var(--color-primary);
             margin-bottom: 10px;
             padding-bottom: 6px;
             border-bottom: 1px solid rgba(0,0,0,0.1);
@@ -165,7 +164,7 @@
         }
         
         .highlight {
-            background: linear-gradient(180deg, transparent 60%, rgba(196, 169, 98, 0.3) 60%);
+            background: linear-gradient(180deg, transparent 60%, rgba(224, 40, 40, 0.2) 60%);
             padding: 0 2px;
         }
         
@@ -178,7 +177,7 @@
         }
         
         .panel-footer a {
-            color: var(--color-river);
+            color: var(--color-accent);
             text-decoration: none;
         }
         
@@ -192,7 +191,7 @@
             top: 20px;
             left: 20px;
             z-index: 1001;
-            background: var(--color-forest);
+            background: var(--color-primary);
             color: white;
             border: none;
             padding: 12px 16px;
@@ -204,7 +203,7 @@
         }
         
         .toggle-btn:hover {
-            background: var(--color-forest-light);
+            background: var(--color-primary-light);
         }
         
         /* Leaflet control styling */
@@ -215,7 +214,7 @@
         
         .leaflet-control-zoom a {
             background: var(--color-sand) !important;
-            color: var(--color-forest) !important;
+            color: var(--color-primary) !important;
             border: none !important;
         }
         
@@ -246,7 +245,7 @@
             width: 20px;
             height: 12px;
             border: 2px solid var(--color-accent);
-            background: rgba(196, 169, 98, 0.25);
+            background: rgba(224, 40, 40, 0.25);
             border-radius: 2px;
         }
         
@@ -364,17 +363,17 @@
             maxZoom: 19
         }).addTo(map);
         
-        // Style for the property boundary
+        // Style for the property boundary (FMU red)
         const boundaryStyle = {
-            color: '#c4a962',
+            color: '#e02828',
             weight: 3,
             opacity: 1,
-            fillColor: '#c4a962',
+            fillColor: '#e02828',
             fillOpacity: 0.15
         };
         
         // Load boundary from external GeoJSON file
-        fetch('boundary.geojson')
+        fetch('DuckPonds.geojson')
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Failed to load boundary data');
@@ -382,15 +381,20 @@
                 return response.json();
             })
             .then(data => {
+                // Remove CRS property if present (can cause issues with Leaflet)
+                if (data.crs) {
+                    delete data.crs;
+                }
+
                 const boundaryLayer = L.geoJSON(data, {
                     style: boundaryStyle,
                     onEachFeature: function(feature, layer) {
-                        if (feature.properties && feature.properties.name) {
-                            layer.bindPopup('<strong>' + feature.properties.name + '</strong>');
+                        if (feature.properties && feature.properties.Name) {
+                            layer.bindPopup('<strong>' + feature.properties.Name + '</strong>');
                         }
                     }
                 }).addTo(map);
-                
+
                 // Fit the map to the boundary
                 map.fitBounds(boundaryLayer.getBounds(), {
                     padding: [50, 50]
