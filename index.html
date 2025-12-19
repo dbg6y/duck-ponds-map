@@ -225,7 +225,7 @@
         /* Legend */
         .legend {
             position: absolute;
-            bottom: 30px;
+            top: 20px;
             right: 20px;
             background: var(--color-sand);
             padding: 12px 16px;
@@ -309,7 +309,7 @@
             
             <div class="section">
                 <h2>About the Property</h2>
-                <p>Located along the <span class="highlight">Great Pee Dee River</span> in Florence and Darlington Counties, the Duck Ponds property will serve as the primary field site for FMU's new forestry program launching in August 2026.</p>
+                <p>Located along the Great Pee Dee River in Florence and Darlington Counties, the Duck Ponds property will serve as the primary field site for FMU's new forestry program launching in August 2026.</p>
             </div>
             
             <div class="section">
@@ -354,8 +354,13 @@
     <script>
         // Initialize the map
         const map = L.map('map', {
-            zoomControl: true
+            zoomControl: false  // Disable default position
         });
+
+        // Add zoom control to bottom-right to avoid info panel
+        L.control.zoom({
+            position: 'bottomright'
+        }).addTo(map);
         
         // Add ESRI World Imagery basemap
         L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
